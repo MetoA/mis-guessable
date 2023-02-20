@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        check_nullability: true
+    hibernate:
+      ddl-auto: validate
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/guessable
+    username: guessable
+    password: guessable
+
+  flyway:
+    locations:
+      - classpath:db/migrations
