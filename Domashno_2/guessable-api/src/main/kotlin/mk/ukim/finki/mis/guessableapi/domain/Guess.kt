@@ -3,6 +3,7 @@ package mk.ukim.finki.mis.guessableapi.domain
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
+// TODO add distance from guessed location to actual location
 @Entity
 @Table(name = "guesses")
 data class Guess(

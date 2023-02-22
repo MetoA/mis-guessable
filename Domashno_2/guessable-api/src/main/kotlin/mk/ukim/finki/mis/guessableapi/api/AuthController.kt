@@ -23,4 +23,6 @@ class AuthController(val service: AuthService) {
     fun register(@RequestBody request: AuthRequest) = with(request) {
         service.register(username, password)
     }
+
+    // TODO add logout
 }

@@ -15,4 +15,6 @@ class GuessController(
 
     @GetMapping("my_guesses")
     fun userGuesses(authentication: Authentication): List<Guess> = service.findGuessesByUsername(authentication.name)
+
+    // TODO create guess
 }
