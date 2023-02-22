@@ -10,7 +10,7 @@ Future<Map<String, String>> headers() async {
   };
 
   if (authToken != null) {
-    headers['Authorization'] = 'Bearer $authToken';
+    headers['Authorization'] = authToken;
   }
 
   return headers;

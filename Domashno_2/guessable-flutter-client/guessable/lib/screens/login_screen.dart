@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:guessable/api/auth_api.dart';
+import 'package:guessable/api/status_codes_extensions.dart';
+import 'package:guessable/domain/jwt_token_response.dart';
+import 'package:guessable/screens/home_screen.dart';
 import 'package:guessable/screens/signup_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String route = '/login';
@@ -65,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: username.isEmpty || password.isEmpty
                         ? null
                         : () {
-                            print('LOGIN CLICKED');
+                            onLogin();
                           },
                     child: const Text('LOGIN'),
                   ),
@@ -93,7 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: const TextStyle(color: Colors.deepPurple),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            print('CLICKED SIGN UP');
                             Navigator.of(context).pushNamed(SignupScreen.route);
                           },
                       ),
@@ -104,5 +110,19 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ));
+  }
+
+  void onLogin() async {
+    final loginResponse = await AuthAPI.login(username, password);
+    if (loginResponse.statusCode.isSuccessful) {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      JwtTokenResponse response = JwtTokenResponse.fromJson(jsonDecode(loginResponse.body));
+      sharedPreferences.setString('auth_token', 'Bearer ${response.token}');
+
+      // TODO shouldn't use context in async calls...
+      Navigator.of(context).pushNamedAndRemoveUntil(HomeScreen.route, (route) => false);
+    } else {
+      throw Exception('Failed to login');
+    }
   }
 }
