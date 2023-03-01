@@ -3,6 +3,7 @@ import 'package:guessable/screens/create_screen.dart';
 import 'package:guessable/screens/guess_screen.dart';
 import 'package:guessable/widgets/bottom_nav.dart';
 
+import '../widgets/user_app_bar.dart';
 import 'history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,9 +14,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-      ),
+      appBar: const UserAppBar(title: 'Home'),
       body: Container(
         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 50),
         child: Center(

@@ -1,19 +1,36 @@
 import 'dart:convert';
-
-import 'package:guessable/api/headers.dart';
+import 'package:guessable/api/http_client.dart';
+import 'package:guessable/api/status_codes_extensions.dart';
 import 'package:guessable/api/urls.dart';
-import 'package:http/http.dart' as http;
+import 'package:guessable/domain/jwt_token_response.dart';
+import 'package:guessable/service/notifications_service.dart';
 
-// TODO maybe convert these functions to the appropriate data classes here because
-// https://docs.flutter.dev/cookbook/networking/fetch-data#convert-the-httpresponse-to-an-album
 class AuthAPI {
-  static Future<http.Response> login(String username, String password) async {
-    return http.post(Uri.parse('$baseUrl/api/auth/login'),
-        headers: await headers(), body: jsonEncode(<String, String>{'username': username, 'password': password}));
+  static final http = HttpClient.client;
+
+  static Future<JwtTokenResponse?> login(
+      String username, String password) async {
+    final response = await http.post(Uri.parse('$baseUrl/api/auth/login'),
+        body: jsonEncode({'username': username, 'password': password}));
+
+    if (response.statusCode.isSuccessful) {
+      return JwtTokenResponse.fromJson(jsonDecode(response.body));
+    } else {
+      NotificationsService.error('Invalid username or password');
+    }
+
+    return null;
   }
 
-  static Future<http.Response> register(String username, String password) async {
-    return http.post(Uri.parse('$baseUrl/api/auth/register'),
-        headers: await headers(), body: jsonEncode(<String, String>{'username': username, 'password': password}));
+  static Future<void> register(String username, String password) async {
+    final response = await http.post(Uri.parse('$baseUrl/api/auth/register'),
+        body: jsonEncode(
+            <String, String>{'username': username, 'password': password}));
+
+    if (response.statusCode.isSuccessful) {
+      NotificationsService.success('Sign Up successful!');
+    } else {
+      NotificationsService.error('Username already exists');
+    }
   }
 }
