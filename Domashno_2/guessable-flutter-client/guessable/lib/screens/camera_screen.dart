@@ -15,6 +15,7 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen> {
   late CameraController _cameraController;
+  bool _isRearCameraSelected = true;
 
   @override
   void initState() {
@@ -31,21 +32,42 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _cameraController.value.isInitialized
-            ? CameraPreview(
-                _cameraController,
-                child: IconButton(
+        body: SafeArea(
+      child: Stack(children: [
+        (_cameraController.value.isInitialized)
+            ? CameraPreview(_cameraController)
+            : Container(color: Colors.black, child: const Center(child: CircularProgressIndicator())),
+        Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.20,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)), color: Colors.black),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(
+                    child: IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 30,
+                  icon: Icon(_isRearCameraSelected ? Icons.switch_camera_outlined : Icons.switch_camera,
+                      color: Colors.white),
+                  onPressed: () {
+                    setState(() => _isRearCameraSelected = !_isRearCameraSelected);
+                    initCamera(widget.cameras![_isRearCameraSelected ? 0 : 1]);
+                  },
+                )),
+                Expanded(
+                    child: IconButton(
                   onPressed: takePicture,
                   iconSize: 50,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   icon: const Icon(Icons.circle, color: Colors.white),
-                ),
-              )
-            : const Center(child: CircularProgressIndicator()),
-      ),
-    );
+                )),
+                const Spacer(),
+              ]),
+            )),
+      ]),
+    ));
   }
 
   Future initCamera(CameraDescription cameraDescription) async {
@@ -72,7 +94,6 @@ class _CameraScreenState extends State<CameraScreen> {
       // TODO context should not be in async...
       BlocProvider.of<CreateGuessBloc>(context).add(CreateGuessLocationImageAddedEvent(locationImage: picture));
       Navigator.pop(context);
-      // Navigator.pushNamedAndRemoveUntil(context, CreateScreen.route, (route) => false);
     } on CameraException catch (e) {
       debugPrint("Error occurred while taking picture $e");
       return null;
