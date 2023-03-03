@@ -16,11 +16,11 @@ data class Location(
     @Column(name = "longitude")
     val longitude: Double,
 
+    @JsonIgnore
     @Column(name = "image")
     val image: ByteArray,
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "created_by")
     val createdBy: GuessableUser,
 )
