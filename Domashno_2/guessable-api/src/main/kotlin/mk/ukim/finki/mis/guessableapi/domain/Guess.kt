@@ -25,4 +25,7 @@ data class Guess(
 
     @Column(name = "guessed_longitude")
     val guessedLongitude: Double,
+
+    @Column(name = "distance")
+    val distance: Double,
 )

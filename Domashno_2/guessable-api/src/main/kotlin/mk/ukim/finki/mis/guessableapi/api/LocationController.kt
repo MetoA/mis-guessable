@@ -2,6 +2,7 @@ package mk.ukim.finki.mis.guessableapi.api
 
 import mk.ukim.finki.mis.guessableapi.domain.Location
 import mk.ukim.finki.mis.guessableapi.requests.CreateLocationRequest
+import mk.ukim.finki.mis.guessableapi.service.GuessService
 import mk.ukim.finki.mis.guessableapi.service.LocationService
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.MediaType
@@ -12,10 +13,23 @@ import java.io.ByteArrayInputStream
 
 @RestController
 @RequestMapping("/api/location")
-class LocationController(val service: LocationService) {
+class LocationController(
+    private val service: LocationService,
+    private val guessService: GuessService,
+) {
 
-    @GetMapping
-    fun getRandomLocation(): Location = service.getRandomLocation()
+    @GetMapping("/random")
+    fun getRandomLocation(authentication: Authentication): LocationResponse? {
+        val guessedLocationIds = guessService.findGuessedLocationIds(authentication.name)
+        // Weird thing where if the guessed locations is empty it will always return null
+        val location = service.getRandomLocation(guessedLocationIds.ifEmpty { listOf(0L) })
+        return location?.let {
+            LocationResponse(it.id, it.latitude, it.longitude, it.image.joinToString(",") { byte -> byte.toString() })
+        }
+    }
+
+    // Dumb hack so I can get the image to render on flutter...
+    data class LocationResponse(val id: Long, val latitude: Double, val longitude: Double, val image: String)
 
     @PostMapping
     fun createLocation(@RequestBody request: CreateLocationRequest, authentication: Authentication): Location =

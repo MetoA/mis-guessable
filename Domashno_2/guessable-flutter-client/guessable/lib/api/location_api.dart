@@ -13,7 +13,7 @@ class LocationAPI {
   static final http = HttpClient.client;
 
   static Future<Response> randomLocation() async {
-    return http.get(Uri.parse('$baseUrl/api/location'));
+    return http.get(Uri.parse('$baseUrl/api/location/random'));
   }
 
   static Future<Response> createLocation(double latitude, double longitude, Uint8List image) async {

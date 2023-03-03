@@ -1,33 +1,29 @@
 import 'package:equatable/equatable.dart';
 import 'package:guessable/domain/location.dart';
-import 'package:guessable/domain/user.dart';
 
 class Guess extends Equatable {
   final int id;
   final Location location;
-  final User guessedBy;
   final double guessedLatitude;
   final double guessedLongitude;
-  final double distanceMeters;
+  final double distance;
 
   const Guess(
       {required this.id,
       required this.location,
-      required this.guessedBy,
       required this.guessedLatitude,
       required this.guessedLongitude,
-      required this.distanceMeters});
+      required this.distance});
 
   factory Guess.fromJson(Map<String, dynamic> json) {
     return Guess(
         id: json['id'],
         location: Location.fromJson(json['location']),
-        guessedBy: User.fromJson(json['guessedBy']),
         guessedLatitude: json['guessedLatitude'],
         guessedLongitude: json['guessedLongitude'],
-        distanceMeters: json['distanceMeters']);
+        distance: json['distance']);
   }
 
   @override
-  List<Object?> get props => [id, location, guessedBy, guessedLatitude, guessedLongitude, distanceMeters];
+  List<Object?> get props => [id, location, guessedLatitude, guessedLongitude, distance];
 }
