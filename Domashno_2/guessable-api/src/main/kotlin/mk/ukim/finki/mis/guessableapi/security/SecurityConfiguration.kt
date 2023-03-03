@@ -25,7 +25,8 @@ class SecurityConfiguration(
         http
             .cors().and().csrf().disable()
             .authorizeHttpRequests {
-                it.requestMatchers("/api/auth/**").permitAll().anyRequest().authenticated()
+                it.requestMatchers("/api/auth/**", "/api/location/*/image")
+                    .permitAll().anyRequest().authenticated()
             }
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authenticationProvider(authenticationProvider())
