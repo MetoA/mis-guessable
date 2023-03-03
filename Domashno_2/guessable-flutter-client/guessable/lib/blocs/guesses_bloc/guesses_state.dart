@@ -29,6 +29,15 @@ class GuessesPopulatedState extends GuessesState {
   List<Object?> get props => [guesses];
 }
 
+class GuessSelectedState extends GuessesState {
+  final Guess guess;
+
+  GuessSelectedState(this.guess) : super(guesses: []);
+
+  @override
+  List<Object?> get props => [guess];
+}
+
 class GuessesErrorState extends GuessesState {
   final String error;
 

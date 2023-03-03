@@ -1,9 +1,7 @@
 package mk.ukim.finki.mis.guessableapi.domain
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
-// TODO add distance from guessed location to actual location
 @Entity
 @Table(name = "guesses")
 data class Guess(
@@ -16,7 +14,6 @@ data class Guess(
     val location: Location,
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "guessed_by")
     val guessedBy: GuessableUser,
 
@@ -25,4 +22,7 @@ data class Guess(
 
     @Column(name = "guessed_longitude")
     val guessedLongitude: Double,
+
+    @Column(name = "distance")
+    val distanceMeters: Double,
 )

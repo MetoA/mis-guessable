@@ -1,15 +1,24 @@
-import 'package:guessable/api/urls.dart';
-import 'package:http/http.dart';
+import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:guessable/api/status_codes_extensions.dart';
+import 'package:guessable/api/urls.dart';
+import '../domain/guess.dart';
 import 'http_client.dart';
 
-// TODO maybe convert these functions to the appropriate data classes here because
-// https://docs.flutter.dev/cookbook/networking/fetch-data#convert-the-httpresponse-to-an-album
 class GuessAPI {
-
   static final http = HttpClient.client;
 
-  static Future<Response> myGuesses() async {
-    return http.get(Uri.parse('$baseUrl/api/guess/my_guesses'));
+  static Future<List<Guess>> myGuesses() async {
+    final response = await http.get(Uri.parse('$baseUrl/api/guess/my_guesses'));
+
+    if (response.statusCode.isSuccessful) {
+      debugPrint(List.from(json.decode(response.body)).toString());
+      return List.from(json.decode(response.body))
+          .map((it) => Guess.fromJson(it))
+          .toList();
+    } else {
+      throw Exception('Error fetching guesses!');
+    }
   }
 }
