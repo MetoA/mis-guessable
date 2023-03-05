@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:guessable/screens/create_screen.dart';
+import 'package:guessable/screens/guess_screen.dart';
 import 'package:guessable/screens/home_screen.dart';
 import 'package:collection/collection.dart';
 
 import '../screens/history_screen.dart';
 
-// TODO change this so that the navigation happens on the same screen?
 class BottomNav extends StatefulWidget {
   static const String route = '/login';
   final String currentRoute;
@@ -60,7 +61,7 @@ class _NavItem {
 
 final _navItems = <_NavItem>[
   const _NavItem(HomeScreen.route, 0, Icon(Icons.home), 'Home'),
-  const _NavItem(HistoryScreen.route, 1, Icon(Icons.list), 'History'), // TODO
-  const _NavItem('/create', 2, Icon(Icons.add), 'Create'), // TODO
-  const _NavItem('/guess', 3, Icon(Icons.pin_drop), 'Guess'), // TODO
+  const _NavItem(HistoryScreen.route, 1, Icon(Icons.list), 'History'),
+  const _NavItem(CreateScreen.route, 2, Icon(Icons.add), 'Create'),
+  const _NavItem(GuessScreen.route, 3, Icon(Icons.pin_drop), 'Guess'),
 ];

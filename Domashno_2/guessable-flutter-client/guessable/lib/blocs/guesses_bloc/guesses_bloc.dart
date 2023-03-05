@@ -27,13 +27,8 @@ class GuessesBloc extends Bloc<GuessesEvent, GuessesState> {
     });
 
     on<GuessAddedEvent>((event, emit) async {
-      // TODO
-      // make api call
-      // if successful add guess to list
       _guesses.add(event.guess);
       emit(GuessesPopulatedState(guesses: _guesses));
-      // else error state
-      // emit(GuessesErrorState(error: 'Error creating guess'));
     });
   }
 }

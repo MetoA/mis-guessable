@@ -44,6 +44,7 @@ dependencies:
   equatable: ^2.0.5
   http_interceptor: ^1.0.1
   google_maps_flutter: ^2.2.4
+  simple_gesture_detector: ^0.2.0
 
 dev_dependencies:
   flutter_test:

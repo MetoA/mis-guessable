@@ -91,7 +91,6 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       await _cameraController.setFlashMode(FlashMode.off);
       XFile picture = await _cameraController.takePicture();
-      // TODO context should not be in async...
       BlocProvider.of<CreateGuessBloc>(context).add(CreateGuessLocationImageAddedEvent(locationImage: picture));
       Navigator.pop(context);
     } on CameraException catch (e) {

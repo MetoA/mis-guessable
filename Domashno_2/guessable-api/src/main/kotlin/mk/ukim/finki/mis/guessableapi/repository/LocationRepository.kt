@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface LocationRepository : JpaRepository<Location, Long> {
 
-    @Query(value = "select * from locations limit 1 offset :randomNum", nativeQuery = true)
-    fun getRandomLocation(randomNum: Long): Location
+    @Query("select * from locations where id not in (:guessedIds) limit 1", nativeQuery = true)
+    fun getRandomLocation(guessedIds: List<Long>): Location?
 }
