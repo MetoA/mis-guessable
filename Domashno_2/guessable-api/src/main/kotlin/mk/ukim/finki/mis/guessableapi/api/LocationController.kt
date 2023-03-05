@@ -19,18 +19,11 @@ class LocationController(
 ) {
 
     @GetMapping("/random")
-    fun getRandomLocation(authentication: Authentication): LocationResponse? {
+    fun getRandomLocation(authentication: Authentication): Location? {
         val guessedLocationIds = guessService.findGuessedLocationIds(authentication.name)
         // Weird thing where if the guessed locations is empty it will always return null
-        val location = service.getRandomLocation(guessedLocationIds.ifEmpty { listOf(0L) })
-        return location?.let {
-            LocationResponse(it.id, it.latitude, it.longitude, it.image.joinToString(",") { byte -> byte.toString() })
-        }
+        return service.getRandomLocation(guessedLocationIds.ifEmpty { listOf(0L) })
     }
-
-    // Dumb hack so I can get the image to render on flutter...
-    data class LocationResponse(val id: Long, val latitude: Double, val longitude: Double, val image: String)
-
     @PostMapping
     fun createLocation(@RequestBody request: CreateLocationRequest, authentication: Authentication): Location =
         with(request) {

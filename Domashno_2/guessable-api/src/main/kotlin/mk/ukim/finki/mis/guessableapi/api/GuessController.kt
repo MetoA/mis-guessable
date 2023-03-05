@@ -24,7 +24,6 @@ class GuessController(
     @GetMapping("/my_guesses")
     fun userGuesses(authentication: Authentication): List<Guess> = service.findGuesses(authentication.name)
 
-    // TODO create guess
     @PostMapping
     fun createGuess(
         @RequestBody request: CreateGuessRequest,

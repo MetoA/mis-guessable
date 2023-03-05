@@ -6,8 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:guessable/blocs/guesses_bloc/guesses_bloc.dart';
 import 'package:guessable/blocs/guesses_bloc/guesses_event.dart';
 import 'package:guessable/blocs/guesses_bloc/guesses_state.dart';
+import 'package:guessable/widgets/image_frame.dart';
 import 'package:guessable/widgets/user_app_bar.dart';
-import '../api/urls.dart';
 import '../domain/guess.dart';
 import '../widgets/bottom_nav.dart';
 
@@ -64,7 +64,7 @@ class HistoryScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Guessed distance: ${guess.distanceMeters}m",
+              "Guessed distance: ${guess.distance.toStringAsFixed(2)}km",
               style: const TextStyle(fontSize: 16),
             ),
             SizedBox(
@@ -173,38 +173,7 @@ class _HistoryMapScreen extends StatelessWidget {
                     ),
                   },
                 ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (builder) {
-                        return _ImageFullScreen(id: state.guess.location.id);
-                      }));
-                    },
-                    child: Hero(
-                      tag: state.guess.location.id,
-                      child: Container(
-                        margin: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(5)),
-                            border:
-                                Border.all(color: Colors.deepPurple, width: 2)),
-                        width: 150,
-                        height: 150,
-                        child: Image.network(
-                          "$baseUrl/api/location/${state.guess.location.id}/image",
-                          fit: BoxFit.fill,
-                          height: double.infinity,
-                          width: double.infinity,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                ImageFrame(locationId: state.guess.location.id),
               ],
             );
           } else {
@@ -231,28 +200,6 @@ class _HistoryMapScreen extends StatelessWidget {
     return LatLngBounds(
       southwest: lowestLatLowestLong,
       northeast: highestLatHighestLong,
-    );
-  }
-}
-
-class _ImageFullScreen extends StatelessWidget {
-  final int id;
-
-  const _ImageFullScreen({required this.id});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Hero(
-        tag: id,
-        child: Image.network(
-          "$baseUrl/api/location/$id/image",
-          fit: BoxFit.fill,
-          height: double.infinity,
-          width: double.infinity,
-        ),
-      ),
     );
   }
 }

@@ -6,7 +6,6 @@ import 'package:guessable/blocs/auth_bloc/auth_events.dart';
 import '../blocs/auth_bloc/auth_state.dart';
 import '../screens/login_screen.dart';
 
-// TODO add this to all screens
 class UserAppBar extends StatelessWidget with PreferredSizeWidget {
   final String title;
 

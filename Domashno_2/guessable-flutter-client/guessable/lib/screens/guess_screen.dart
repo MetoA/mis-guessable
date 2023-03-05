@@ -1,13 +1,13 @@
-import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:guessable/api/location_api.dart';
 import 'package:guessable/api/status_codes_extensions.dart';
 import 'package:guessable/domain/guess.dart';
+import 'package:guessable/service/notifications_service.dart';
+import 'package:guessable/widgets/image_frame.dart';
+import 'package:guessable/widgets/user_app_bar.dart';
 
 import '../api/guess_api.dart';
 import '../domain/location.dart';
@@ -25,13 +25,10 @@ class GuessScreen extends StatefulWidget {
 class _GuessScreenState extends State<GuessScreen> {
   Location? _randomGuessableLocation;
   Marker? _guessMarker;
-  
   Guess? _guess;
   bool _loadingRandomLocation = false;
   bool _loadingResults = false;
   String? error;
-
-  final Completer<GoogleMapController> _mapController = Completer<GoogleMapController>();
 
   @override
   void initState() {
@@ -42,11 +39,9 @@ class _GuessScreenState extends State<GuessScreen> {
 
     LocationAPI.randomLocation().then((response) {
       if (response.statusCode.isSuccessful) {
-        print("Response: ${response.body}");
         setState(() {
           _randomGuessableLocation = response.body.isEmpty ? null : Location.fromJson(jsonDecode(response.body));
         });
-        print("Random guessable location: $_randomGuessableLocation");
       } else {
         error = 'Error getting location to guess!';
       }
@@ -60,89 +55,108 @@ class _GuessScreenState extends State<GuessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Guess'),
+      appBar: const UserAppBar(
+        title: 'Guess',
       ),
-      body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 50),
-            child: Center(
-                child: Column(
-                  children: [
-                    _locationImage(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _mapsWidget(),
-                    _guess != null ? Text('You were off ${_guess!.distance}km') : Container(),
-                    ElevatedButton(
-                      onPressed: _canMakeGuess() ? () {
-                        print('Guess clicked');
-                        setState(() {
-                          _loadingResults = true;
-                        });
-                        GuessAPI.createGuess(_randomGuessableLocation!.id, _guessMarker!.position.latitude,
-                            _guessMarker!.position.longitude).then((response) {
-                              setState(() {
-                                _loadingResults = false;
-                              });
-                               if (response.statusCode.isSuccessful) {
-                                 setState(() {
-                                   _guess = Guess.fromJson(json.decode(response.body));
-                                 });
-                               }
-                        });
-                      } : null,
-                      child: _loadingResults ? const CircularProgressIndicator() : const Text('Make a guess!'),
-                    )
-                  ],
-                )),
-          )),
+      body: _body(),
       bottomNavigationBar: const BottomNav(
         currentRoute: GuessScreen.route,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _canMakeGuess()
+            ? () {
+                setState(() {
+                  _loadingResults = true;
+                });
+                GuessAPI.createGuess(
+                        _randomGuessableLocation!.id, _guessMarker!.position.latitude, _guessMarker!.position.longitude)
+                    .then((response) {
+                  setState(() {
+                    _loadingResults = false;
+                  });
+                  if (response.statusCode.isSuccessful) {
+                    setState(() {
+                      _guess = Guess.fromJson(json.decode(response.body));
+                    });
+                    NotificationsService.success('You were ${_guess!.distance.toStringAsFixed(2)}km away!', durationSeconds: 10);
+                  }
+                });
+
+              }
+            : null,
+        child: const Text('Guess'),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
-  Widget _locationImage() {
-    return _loadingRandomLocation
-        ? const CircularProgressIndicator()
-        : Container(
-      decoration: _borderBoxDecoration(),
-      child:
-      _randomGuessableLocation != null ? Image.memory(_randomGuessableLocation!.image) : const Text('No image'),
-    );
-  }
+  Widget _body() {
+    if (_loadingRandomLocation) {
+      return const CircularProgressIndicator();
+    }
 
-  Widget _mapsWidget() {
-    return _randomGuessableLocation != null
-        ? Container(
-        decoration: _borderBoxDecoration(),
-        height: 500,
-        child: GoogleMap(
-          gestureRecognizers: Set()
-            ..add(Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())),
+    if (_randomGuessableLocation == null) {
+      return const Center(
+        child: Text('Error getting location', style: TextStyle(color: Colors.red),)
+      );
+    }
+    return Stack(
+      children: [
+        GoogleMap(
           mapType: MapType.normal,
-          initialCameraPosition: const CameraPosition(target: LatLng(0, 0), zoom: 0),
-          onMapCreated: (GoogleMapController controller) {
-            _mapController.complete(controller);
-          },
-          onTap: (latLng) {
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(0, 0),
+            zoom: 0,
+          ),
+          zoomControlsEnabled: false,
+          polylines: _polylines(),
+          markers: _markers(),
+          onTap: _guess == null ? (latLng) {
             setState(() {
               _guessMarker =
                   Marker(markerId: MarkerId(latLng.toString()), position: latLng, icon: BitmapDescriptor.defaultMarker);
             });
-          },
-          markers: _guessMarker != null ? {_guessMarker!} : <Marker>{},
-        ))
-        : Container();
+          } : null,
+        ),
+        ImageFrame(locationId: _randomGuessableLocation!.id),
+      ],
+    );
   }
 
-  BoxDecoration _borderBoxDecoration() {
-    return BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Colors.deepPurple, width: 2));
+  Set<Polyline> _polylines() {
+    if (_guess != null && _randomGuessableLocation != null) {
+      var locationLatLng = LatLng(_randomGuessableLocation!.latitude, _randomGuessableLocation!.longitude);
+      var guessedLatLng = LatLng(_guess!.guessedLatitude, _guess!.guessedLongitude);
+      return {
+        Polyline(
+          polylineId: const PolylineId("1"),
+          points: [guessedLatLng, locationLatLng],
+          patterns: [PatternItem.dot, PatternItem.gap(15)],
+          width: 5,
+        ),
+      };
+    } else {
+      return <Polyline>{};
+    }
   }
 
-  bool _canMakeGuess() => _randomGuessableLocation != null && _guessMarker != null && _guess == null && !_loadingResults;
+  Set<Marker> _markers() {
+    var locationMarker = _randomGuessableLocation != null && _guess != null
+        ? Marker(
+            markerId: MarkerId("${_randomGuessableLocation!.id}"),
+            position: LatLng(_randomGuessableLocation!.latitude, _randomGuessableLocation!.longitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueGreen,
+            ),
+            infoWindow: const InfoWindow(
+              title: "Original Location",
+            ),
+          )
+        : null;
+
+    return {_guessMarker, locationMarker}.whereType<Marker>().toSet();
+  }
+
+  bool _canMakeGuess() =>
+      _randomGuessableLocation != null && _guessMarker != null && _guess == null && !_loadingResults;
 }
