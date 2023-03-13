@@ -10,9 +10,21 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
+/**
+ * Request filter for processing the JWT token
+ *
+ * @param[userService] [UserService] for getting the username sent in the token from the database
+ * */
 @Component
 class JwtTokenFilter(val userService: UserService) : OncePerRequestFilter() {
 
+    /**
+     * A function that filters the http request, processing the JWT token and setting the authentication
+     *
+     * @param[request] an [HttpServletRequest]
+     * @param[response] an [HttpServletResponse]
+     * @param[filterChain] the [FilterChain] that continues after processing this filter
+     * */
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -39,6 +51,12 @@ class JwtTokenFilter(val userService: UserService) : OncePerRequestFilter() {
         filterChain.doFilter(request, response)
     }
 
+    /**
+     * A function that parses the http request and gets the JWT token
+     *
+     * @param[request] an [HttpServletRequest] that has the Authorization header for the JWT token
+     * @return the JWT token or null
+     * */
     private fun parseJwt(request: HttpServletRequest): String? =
         request.getHeader("Authorization").let {
             if (!it.isNullOrEmpty() && it.startsWith("Bearer ")) {

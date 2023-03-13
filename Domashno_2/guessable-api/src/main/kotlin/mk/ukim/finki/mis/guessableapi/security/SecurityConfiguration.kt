@@ -14,12 +14,25 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
+/**
+ * Configuration that handles security and authentication
+ *
+ * @param[userService] [UserService] for communication with the repository for users
+ * @param[jwtTokenFilter] a filter that is being processed for every request
+ * */
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(
     val userService: UserService,
-    val jwtTokenFilter: JwtTokenFilter
+    val jwtTokenFilter: JwtTokenFilter,
 ) {
+
+    /**
+     * A filter chain that processes every request
+     *
+     * @param[http] [HttpSecurity] to configure every http request
+     * @return[SecurityFilterChain]
+     * */
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http
@@ -33,15 +46,27 @@ class SecurityConfiguration(
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
 
+    /**
+     * A password encoder [Bean]
+     * @return[BCryptPasswordEncoder]
+     * */
     @Bean
     fun passwordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
 
+    /**
+     * An authentication provider [Bean]
+     * @return[AuthenticationProvider]
+     * */
     @Bean
     fun authenticationProvider(): AuthenticationProvider = DaoAuthenticationProvider().also {
         it.setUserDetailsService(userService)
         it.setPasswordEncoder(passwordEncoder())
     }
 
+    /**
+     * An authentication manager [Bean]
+     * @return[AuthenticationManager]
+     * */
     @Bean
     fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager =
         authenticationConfiguration.authenticationManager
