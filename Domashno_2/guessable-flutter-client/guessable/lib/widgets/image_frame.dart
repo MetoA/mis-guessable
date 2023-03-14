@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../api/urls.dart';
 import '../screens/image_full_screen.dart';
 
+/// A small frame that contains an image from a guessable location through [locationId]
+///
+/// When the image frame is tapped it opens up a fullscreen version of that same image
 class ImageFrame extends StatelessWidget {
   int locationId;
 

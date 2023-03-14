@@ -1,3 +1,4 @@
+/// Extensions for HTTP response status codes and their general number meaning
 extension IntStatusCategories on int {
   bool get isInformational => this >= 100 && this < 200;
 

@@ -6,8 +6,8 @@ import 'package:collection/collection.dart';
 
 import '../screens/history_screen.dart';
 
+/// A bottom navigation bar for multiple screens of the application
 class BottomNav extends StatefulWidget {
-  static const String route = '/login';
   final String currentRoute;
 
   const BottomNav({super.key, required this.currentRoute});
@@ -16,6 +16,7 @@ class BottomNav extends StatefulWidget {
   State<StatefulWidget> createState() => _BottomNavState();
 }
 
+/// The state and logic of the bottom navigation bar for navigating across screens
 class _BottomNavState extends State<BottomNav> {
   int _currentIndex = 0;
 
@@ -33,7 +34,9 @@ class _BottomNavState extends State<BottomNav> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = _navItems.firstWhereOrNull((element) => element.route == widget.currentRoute)?.index ?? 0;
+    _currentIndex = _navItems
+        .firstWhereOrNull((element) => element.route == widget.currentRoute)
+        ?.index ?? 0;
   }
 
   @override
@@ -50,6 +53,12 @@ class _BottomNavState extends State<BottomNav> {
   }
 }
 
+/// Represents information needed for the bottom navigation bar
+///
+/// * [route] decides what page the user will navigate to when clicking the item
+/// * [index] is used for ordering of the [_NavItem]
+/// * [icon] is displayed on the button and for contextual purposes
+/// * [label] is presented under the icon in cases where the icon is not self-explanatory
 class _NavItem {
   final String route;
   final int index;
@@ -59,6 +68,7 @@ class _NavItem {
   const _NavItem(this.route, this.index, this.icon, this.label);
 }
 
+/// A list of [_NavItem] that is used for the bottom navigation bar to navigate through all of the screens in the application
 final _navItems = <_NavItem>[
   const _NavItem(HomeScreen.route, 0, Icon(Icons.home), 'Home'),
   const _NavItem(HistoryScreen.route, 1, Icon(Icons.list), 'History'),

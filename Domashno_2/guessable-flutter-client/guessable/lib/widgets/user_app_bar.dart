@@ -6,6 +6,7 @@ import 'package:guessable/blocs/auth_bloc/auth_events.dart';
 import '../blocs/auth_bloc/auth_state.dart';
 import '../screens/login_screen.dart';
 
+/// A top application bar that displays a [title] of choice and any other navigation actions
 class UserAppBar extends StatelessWidget with PreferredSizeWidget {
   final String title;
 
