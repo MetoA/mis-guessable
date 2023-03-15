@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:guessable/blocs/create_guess_bloc/create_guess_bloc.dart';
 import 'package:guessable/blocs/create_guess_bloc/create_guess_event.dart';
 
+/// The camera screen used for taking a picture when creating a new location
 class CameraScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -13,6 +14,7 @@ class CameraScreen extends StatefulWidget {
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
+/// The state and logic of the camera screen
 class _CameraScreenState extends State<CameraScreen> {
   late CameraController _cameraController;
   bool _isRearCameraSelected = true;

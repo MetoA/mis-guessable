@@ -6,6 +6,8 @@ import 'package:guessable/widgets/bottom_nav.dart';
 import '../widgets/user_app_bar.dart';
 import 'history_screen.dart';
 
+/// The main screen of the application where we have the main menu
+/// used for navigating across the other screens
 class HomeScreen extends StatelessWidget {
   static const String route = '/home';
 

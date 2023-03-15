@@ -11,6 +11,7 @@ import 'package:guessable/widgets/user_app_bar.dart';
 import '../domain/guess.dart';
 import '../widgets/bottom_nav.dart';
 
+/// The history screen where the users can see their past guesses
 class HistoryScreen extends StatelessWidget {
   static const String route = '/history';
 

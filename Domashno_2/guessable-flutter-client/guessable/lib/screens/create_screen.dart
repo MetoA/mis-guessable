@@ -14,6 +14,7 @@ import '../blocs/create_guess_bloc/create_guess_event.dart';
 import '../widgets/bottom_nav.dart';
 import 'camera_screen.dart';
 
+/// The create screen used for creating a new location
 class CreateScreen extends StatefulWidget {
   static const String route = '/create';
 
@@ -23,6 +24,7 @@ class CreateScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _CreateScreenState();
 }
 
+/// The state and logic of the create screen
 class _CreateScreenState extends State<CreateScreen> {
   Position? userPosition;
   String? userPositionError;

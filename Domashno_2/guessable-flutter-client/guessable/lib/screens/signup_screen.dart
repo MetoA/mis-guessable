@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../api/auth_api.dart';
 
+/// The sign up screen where the users can create a new account
 class SignupScreen extends StatefulWidget {
   static const String route = '/signup';
 
@@ -10,6 +11,7 @@ class SignupScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _SignupScreenState();
 }
 
+/// The state and logic of the sign up screen
 class _SignupScreenState extends State<SignupScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();

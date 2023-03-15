@@ -5,6 +5,8 @@ import 'package:guessable/blocs/auth_bloc/auth_state.dart';
 import 'package:guessable/screens/home_screen.dart';
 import 'package:guessable/screens/login_screen.dart';
 
+/// A splash screen that is shown when opening the app while
+/// checking if the user is authenticated or not
 class SplashScreen extends StatelessWidget {
   static const String route = '/splash';
 

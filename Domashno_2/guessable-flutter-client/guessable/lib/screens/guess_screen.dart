@@ -13,6 +13,8 @@ import '../api/guess_api.dart';
 import '../domain/location.dart';
 import '../widgets/bottom_nav.dart';
 
+/// The guess screen where the user is shown a random image and he has to
+/// guess the location on the map
 class GuessScreen extends StatefulWidget {
   static const String route = '/guess';
 
@@ -22,6 +24,7 @@ class GuessScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _GuessScreenState();
 }
 
+/// The state and logic of the guess screen
 class _GuessScreenState extends State<GuessScreen> {
   Location? _randomGuessableLocation;
   Marker? _guessMarker;

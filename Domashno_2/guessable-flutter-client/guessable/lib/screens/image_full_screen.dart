@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../api/urls.dart';
 
+/// The screen used for showing the image in full screen
+/// after clicking on the image frame widget
 class ImageFullScreen extends StatelessWidget {
   final int id;
 

@@ -9,6 +9,7 @@ import 'package:guessable/screens/signup_screen.dart';
 import '../blocs/auth_bloc/auth_bloc.dart';
 import '../blocs/auth_bloc/auth_state.dart';
 
+/// The login screen where the users login
 class LoginScreen extends StatefulWidget {
   static const String route = '/login';
 
@@ -18,6 +19,7 @@ class LoginScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _LoginScreenState();
 }
 
+/// The state and logic of the login screen
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
